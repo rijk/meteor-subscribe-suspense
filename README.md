@@ -3,7 +3,7 @@ It allows you to suspend while your a subscription is loading, and gives you pow
 preload and unload your data.
 
 > :warning: **Warning: this is experimental.** While it's used in real world projects, there are no tests yet, and it
-currently only works on the client. If you like it, feel free to contribute!
+currently only works on the client. If you like it, please contribute!
 
 
 ## useSubscribe with Suspense support
@@ -34,7 +34,7 @@ will be thrown so they can be caught with an [Error Boundary](https://reactjs.or
 Using Suspense for this can make components lighter and easier to reason about, as you can read the code top down and
 assume the needed data is there without having to do `ready()` checks.
 
-### useSubscription hook
+### useSubscription hook source
 The code for this hook is fairly simple:
 
 ```tsx
@@ -49,18 +49,20 @@ function useSubscription( name ...args ) {
 }
 ```
 
-This gives you a peak of how the use-asset API is used. This is exposed under a secondary export `subscriptions`, and
-this opens the door for some powerful stuff.
+This gives you a peak of how the `use-asset` API is used.
 
 ## Powerful control over your subscriptions
 
-As this package keeps a cache of subscriptions (needed for Suspense), we can do some fun stuff.
+As this package keeps a cache of subscriptions (needed for Suspense), we can do some fun stuff. The cache is exposed
+under a named export `subscriptions`, and accessing this opens the door for some powerful stuff.
 
 ### Keep subscription open after unmounting
 
 There are cases where you wouldn't want to load data the user doesn't need, but after the user has requested it it's
 more efficient to just keep it in memory instead of stopping/restarting the subscription as the user navigates through
-the app. An example could be this All Projects list:
+the app.
+
+An example could be a list with All Projects:
 
 ```tsx
 import { subscriptions } from 'meteor-subscribe-suspense'
@@ -78,8 +80,8 @@ function AllProjects() {
 }
 ```
 
-I used `subscriptions.read` instead of `useSubscription` here (the function signature is the same). This will suspend
-the component the first time it is called, but will not run the `useEffect` cleanup stopping the subscription.
+I used `subscriptions.read` instead of `useSubscription` here (the function signature is the same). This _will_ suspend
+the component the first time it is called, but _will not_ run the `useEffect` cleanup stopping the subscription.
 Therefore, the next time this component is mounted it will render immediately, without delay. This is similar to
 putting the subscription in a parent component, except that it's not initialized until the user requests the data the
 first time.
@@ -123,5 +125,25 @@ function Welcome() {
 ```
 
 You can also use this to initiate a subscription without suspending, more similar to `useTracker()`. This can be
-useful when the subscription doesn't contain essential data and you can already render some UI. You still keep the
-same powerful controls like preloading and choosing when to stop the subscription.
+useful when the subscription doesn't contain essential data and you can already render some UI.
+
+```tsx
+function Dashboard() {
+  subscriptions.preload( 'dashboard.stats' ) // used .preload instead of .read
+  const stats = useCursor( () => Stats.find({}), [] )
+
+  // We can already render the page layout here, while the subscription loads
+  return (
+    <div>
+      <nav />
+      <main>
+        {stats.map( stat => (
+          <div key={stat.id}><b>{stat.title}: {stat.text}</div>
+        ))}
+      </main>
+    </div>
+  )
+}
+```
+
+Doing this, you still keep the same benefits like preloading and choosing when to stop the subscription.
