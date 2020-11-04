@@ -1,8 +1,8 @@
-This package is built on the amazingly small but wonderful [`use-asset`](https://github.com/pmndrs/use-asset) package. 
-It allows you to suspend while your a subscription is loading, and gives you powerful controls over when to load, 
+This package is built on the amazingly small but wonderful [`use-asset`](https://github.com/pmndrs/use-asset) package.
+It allows you to suspend while your a subscription is loading, and gives you powerful controls over when to load,
 preload and unload your data.
 
-> :warning: **Warning: this is experimental.** While it's used in real world projects, there are no tests yet, and it 
+> :warning: **Warning: this is experimental.** While it's used in real world projects, there are no tests yet, and it
 currently only works on the client. If you like it, feel free to contribute!
 
 
@@ -10,6 +10,7 @@ currently only works on the client. If you like it, feel free to contribute!
 
 ```tsx
 import React, { Suspense } from 'react'
+import useSubscription from 'meteor-subscribe-suspense'
 
 function App() {
   return (
@@ -27,13 +28,13 @@ function Board({ id }) {
 ```
 
 This is an example of basic usage; the `useSubscription` hook will initiate a subscription, which will suspend until
-it's ready. The subscription will automatically close when the component unmounts, and any errors in the publication 
+it's ready. The subscription will automatically close when the component unmounts, and any errors in the publication
 will be thrown so they can be caught with an [Error Boundary](https://reactjs.org/docs/error-boundaries.html).
 
-Using Suspense for this can make components lighter and easier to reason about, as you can read the code top down and 
+Using Suspense for this can make components lighter and easier to reason about, as you can read the code top down and
 assume the needed data is there without having to do `ready()` checks.
 
-### useSubscription hook 
+### useSubscription hook
 The code for this hook is fairly simple:
 
 ```tsx
@@ -48,7 +49,7 @@ function useSubscription( name ...args ) {
 }
 ```
 
-This gives you a peak of how the use-asset API is used. This is exposed under a secondary export `subscriptions`, and 
+This gives you a peak of how the use-asset API is used. This is exposed under a secondary export `subscriptions`, and
 this opens the door for some powerful stuff.
 
 ## Powerful control over your subscriptions
@@ -62,7 +63,7 @@ more efficient to just keep it in memory instead of stopping/restarting the subs
 the app. An example could be this All Projects list:
 
 ```tsx
-import { subscriptions } from 'rijk:react-subscribe-suspense'
+import { subscriptions } from 'meteor-subscribe-suspense'
 
 function AllProjects() {
   subscriptions.read( 'projects.all' )
@@ -78,8 +79,8 @@ function AllProjects() {
 ```
 
 I used `subscriptions.read` instead of `useSubscription` here (the function signature is the same). This will suspend
-the component the first time it is called, but will not run the `useEffect` cleanup stopping the subscription. 
-Therefore, the next time this component is mounted it will render immediately, without delay. This is similar to 
+the component the first time it is called, but will not run the `useEffect` cleanup stopping the subscription.
+Therefore, the next time this component is mounted it will render immediately, without delay. This is similar to
 putting the subscription in a parent component, except that it's not initialized until the user requests the data the
 first time.
 
@@ -92,7 +93,7 @@ useSubscription( 'board.projects', boardId ) // will be stopped on unmount
 
 ### Preloading data
 
-Similar to `.read()`, there's also a `.preload()` method, that will silently initiate a subscription. This can be 
+Similar to `.read()`, there's also a `.preload()` method, that will silently initiate a subscription. This can be
 used to strategically preload data based on a user's actions:
 
 ```tsx
@@ -111,7 +112,7 @@ used to strategically preload data based on a user's actions:
 ```tsx
 function Welcome() {
   subscriptions.preload( 'dashboard' )
-  
+
   return (
     <div>
       <p>Welcome back.</p>
@@ -121,6 +122,6 @@ function Welcome() {
 }
 ```
 
-You can also use this to initiate a subscription without suspending, more similar to `useTracker()`. This can be 
+You can also use this to initiate a subscription without suspending, more similar to `useTracker()`. This can be
 useful when the subscription doesn't contain essential data and you can already render some UI. You still keep the
 same powerful controls like preloading and choosing when to stop the subscription.
