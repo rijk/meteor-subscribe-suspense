@@ -1,0 +1,22 @@
+{
+  "name": "react-subscribe-suspense",
+  "dependencies": {
+    "@types/meteor": "^1.4.60",
+    "@types/react": "^16.9.46",
+    "@types/react-dom": "^16.9.8",
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@typescript-eslint/parser": "^4.5.0",
+    "eslint": "^7.11.0",
+    "eslint-import-resolver-meteor": "^0.4.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-react": "^7.21.5",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-test-renderer": "16.13.1",
+    "typescript": "^3.9.7",
+    "use-asset": "0.1.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.13"
+  }
+}
