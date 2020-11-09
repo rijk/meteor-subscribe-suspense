@@ -9,7 +9,12 @@ import { useEffect } from 'react'
  */
 const STOP_DELAY = 1000
 
-export const subscriptions = createAsset( ( name, ...args ) => {
+type Handles = {
+	computation: Tracker.Computation
+	subscription: Meteor.SubscriptionHandle
+}
+
+export const subscriptions = createAsset<Handles>( ( name, ...args ) => {
 	return new Promise( ( resolve, reject ) => {
 		if ( !name ) return resolve()
 
@@ -25,18 +30,13 @@ export const subscriptions = createAsset( ( name, ...args ) => {
 	})
 })
 
-type SubscriptionAsset = {
-	computation: Tracker.Computation
-	subscription: Meteor.SubscriptionHandle
-}
-
 export default function useSubscription(
 	name?: string | false,
 	...args: any[]
 ) {
 	// This starts the subscription (if it is not preloaded yet)
 	// eslint-disable-next-line max-len
-	const { computation } = subscriptions.read( name, ...args ) as SubscriptionAsset
+	const { computation } = subscriptions.read( name, ...args )
 
 	// This stops the subscription on unmount (after delay)
 	useEffect( () => () => {

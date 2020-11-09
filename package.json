@@ -1,6 +1,6 @@
 {
 	"name": "meteor-subscribe-suspense",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Meteor useSubscribe() hook with React Suspense support",
 	"main": "dist/index.cjs",
 	"module": "dist/index.js",
@@ -24,7 +24,7 @@
 		"test": "echo no tests yet"
 	},
 	"dependencies": {
-		"use-asset": "0.1.2"
+		"use-asset": "^0.1.4"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.11.0",
